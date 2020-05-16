@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>CSS Flex</title>
+	<link rel="stylesheet" href="{{url_for('static', filename='default.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='ui.css')}}">
+</head>
+<body>
+	<ul class="menu">
+		<li class="menu-item">
+			<a href="#" class="menu-link">Home</a>
+		</li>
+		<li class="menu-item">
+			<a href="#" class="menu-link">About</a>
+		</li>
+		<li class="menu-item">
+			<a href="#" class="menu-link">Product</a>
+		</li>
+		<li class="menu-item">
+			<a href="#" class="menu-link">Contact</a>
+		</li>
+	</ul>
+
+	<form action="/main" class="search-form">
+		<p>USERNAME</p>
+		<input type="search" name="username">
+		<p>ROOM</p>
+		<input type="search" name="room">
+		<input type="submit" value="찾기">
+	</form>
+</body>
+</html>
