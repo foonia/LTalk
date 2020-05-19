@@ -17,8 +17,6 @@ users = []
 users.append(User(id=1, username='Acapellia',password=''))
 users.append(User(id=2, username='a',password=''))
 users.append(User(id=3, username='b',password=''))
-
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
 socketio = SocketIO(app)
@@ -62,7 +60,7 @@ def chat():
     username = 'guest'
     room = request.args.get('room')
     if room:
-        return render_template('ChatMain.html',username=username,room=room)
+        return render_template('main.html',username=username,room=room)
     else:
         return redirect(url_for('login'))
 
