@@ -1,38 +1,37 @@
 from flask import (
-    Flask, render_template, request, session,
+    Blueprint, render_template, request, session,
     g, redirect, url_for
 )
-from flask_socketio import SocketIO, send, join_room
+from flask_socketio import send, join_room
 
-class User:
-    def __init__(self,id,username,password):
-        self.id = id
-        self.username = username
-        self.password = password
+from ..model.User import User
 
-    def __repr__(self):
-        return f'<User: {self.username}>'
 
-users = []
-users.append(User(id=1, username='Acapellia',password=''))
-users.append(User(id=2, username='a',password=''))
-users.append(User(id=3, username='b',password=''))
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'mysecret'
-socketio = SocketIO(app)
+main = Blueprint('main', __name__, template_folder='templates')
 
-@app.before_request
+###############################################################
+def init_data():
+    users = []
+    users.append(User(id=1, username='Acapellia',password=''))
+    users.append(User(id=2, username='a',password=''))
+    users.append(User(id=3, username='b',password=''))
+###############################################################
+
+
+@main.before_request
 def before_request():
     g.user = None
     if 'user_id' in session:
         user = [x for x in users if x.id == session['user_id']][0]
         g.user = user
 
-@app.route('/')
+
+@main.route('/')
 def index():
     return redirect('login')
 
-@app.route("/login", methods = ['GET','POST'])
+
+@main.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         session.pop('user_id', None)
@@ -48,22 +47,21 @@ def login():
 
     return render_template('login.html')
 
-@app.route("/profile")
+
+@main.route("/profile")
 def profile():
     if not g.user:
         return redirect(url_for('login'))
 
     return render_template('profile.html')
 
-@app.route("/insertroom")
+
+@main.route("/insertroom")
 def chat():
     username = 'guest'
     room = request.args.get('room')
     if room:
-        return render_template('main.html',username=username,room=room)
+        return render_template('main.html', username=username, room=room)
     else:
         return redirect(url_for('login'))
-
-if __name__ == '__main__':
-    socketio.run(app, debug=True)
 
