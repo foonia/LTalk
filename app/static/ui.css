@@ -55,3 +55,33 @@ header h1 {
 .menu-link:hover {
     color: white;
 }
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    height: 8rem;
+    padding: 2rem;
+}
+
+.login-form input[type='search'] {
+    flex: 1;
+    margin-right: 10px;
+    border: 0;
+    border-radius: 0.3em;
+    font-size: 1rem;
+    width: 50%;
+    height: 3rem;
+    margin-bottom: 1em;
+
+}
+.login-form input[type='submit'] {
+    border: 0;
+    border-radius: 0.3em;
+    font-size: 1rem;
+    background: goldenrod;
+    width: 50%;
+    height: 3rem;
+    margin-bottom: 1em;
+
+}

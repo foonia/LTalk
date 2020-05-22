@@ -25,24 +25,19 @@
 	  <a href="" class="menu-link">Contact</a>
 	</li>
   </ul>
-  <!-- primary -->
-  <section class="primary">
-	<div class="editor_container">
-	  <div class="editor_item">
-		<textarea id='editor'>var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-		  mode: "javascript",
-		  lineNumbers: true,
-	  });
-	  editor.save()</textarea>
-	  </div>
-	</div>
-  </section>
+
+  <!-- login form -->
+	<form action="/main" class="login-form">
+		<p>USERNAME</p>
+		<input type="search" name="username">
+		<p>ROOM</p>
+		<input type="search" name="room">
+		<input type="submit" value="찾기">
+	</form>
 
   <!-- footer -->
   <footer class="footer">
-	@copyright
   </footer>
 </div>
 
-<script src="{{ url_for('static', filename='editor.js') }}"></script>
 {% endblock %}
