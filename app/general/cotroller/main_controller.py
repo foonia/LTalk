@@ -5,7 +5,7 @@ from flask import (
 from flask_socketio import send, join_room
 
 from ..model.User import User
-
+from app import socketio
 
 general_bp = Blueprint('general_bp', __name__)
 
@@ -63,4 +63,11 @@ def chat():
         return render_template('main.html', username=username, room=room)
     else:
         return redirect(url_for('login'))
+
+
+@socketio.on('join_room')
+def handle_join_room_event(data):
+    # app.logger.info("{} has joined the room {}".format(data['username'],data['room']))
+    join_room(data['room'])
+    socketio.emit('join_room_announcement', data)
 
