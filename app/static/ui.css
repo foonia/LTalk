@@ -1,0 +1,87 @@
+
+header {
+    display: flex;
+    padding: 1.0em;
+    justify-content: space-between;
+}
+
+/* logo */
+header h1 {
+    color: goldenrod;
+}
+
+/* search */
+.search-form {
+    display: flex;
+    height: 40px;
+}
+.search-form input[type='search'] {
+    flex: 1;
+    margin-right: 10px;
+    border: 0;
+    border-radius: 0.3em;
+    font-size: 1rem;
+}
+.search-form input[type='submit'] {
+    width: 4em;
+    border: 0;
+    border-radius: 0.3em;
+    font-size: 1rem;
+    background: goldenrod;
+}
+
+/* menu */
+.menu {
+    display: flex;
+}
+.menu-item {
+    width: 25%;
+    background: goldenrod;
+    transition: 1s;
+}
+.menu-item:hover {
+    width: 35%;
+    background: rgb(221, 112, 10);
+}
+.menu-link {
+    display: block;
+    padding: 1em;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #555;
+    text-decoration: none;
+    text-align: center;
+}
+.menu-link:hover {
+    color: white;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    height: 8rem;
+    padding: 2rem;
+}
+
+.login-form input[type='search'] {
+    flex: 1;
+    margin-right: 10px;
+    border: 0;
+    border-radius: 0.3em;
+    font-size: 1rem;
+    width: 50%;
+    height: 3rem;
+    margin-bottom: 1em;
+
+}
+.login-form input[type='submit'] {
+    border: 0;
+    border-radius: 0.3em;
+    font-size: 1rem;
+    background: goldenrod;
+    width: 50%;
+    height: 3rem;
+    margin-bottom: 1em;
+
+}

@@ -1,0 +1,10 @@
+.editor_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.editor_item {
+    width: 90vw;
+}
