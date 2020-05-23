@@ -20,10 +20,8 @@ users.append(User(id=3, username='b', password=''))
 @general_bp.before_request
 def before_request():
     CUser = request.cookies.get('username')
-    g.user = None
     if 'username' in session:
         user = [x for x in users if x.id == session[CUser]][0]
-        g.user = user
 
 
 @general_bp.route('/')
@@ -35,17 +33,13 @@ def index():
 def login():
     resp = make_response(redirect(url_for('general_bp.chat')))
     if request.method == 'POST':
-        session.pop('user_id', None)
-
+        session.pop('username', None)
         username = request.form['username']
         room = request.form['room']
-
-
         resp.set_cookie('username',username)
         resp.set_cookie('room','1')
-
-
         user = [x for x in users if x.username == username][0]
+
         '''
         if user and user.password == password:
             session[username] = user.username
@@ -55,7 +49,6 @@ def login():
             session[username] = user.username
             return resp
         return redirect(url_for('login'))
-
 
     return render_template('login.html')
 
@@ -70,7 +63,7 @@ def profile():
 
 @general_bp.route("/insertroom")
 def chat():
-    username = g.user
+    username = request.cookies.get('username')
     '''
     room = request.args.get('room')
     '''

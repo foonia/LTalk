@@ -8,6 +8,7 @@ from flask_socketio import SocketIO
 from app import create_app, db
 
 app = create_app(os.getenv('FLASK_ENV') or 'dev')
+
 # app.app_context().push()
 manager = Manager(app)
 # migrate = Migrate(app, db)
@@ -15,11 +16,9 @@ manager = Manager(app)
 
 socketio = SocketIO(app)
 
-
 @manager.command
 def run():
     socketio.run(app)
-
 
 @manager.command
 def test():
@@ -29,6 +28,12 @@ def test():
     if result.wasSuccessful():
         return 0
     return 1
+
+@socketio.on('join_room')
+def handle_join_room_event(data):
+    app.logger.info("{} has joined the room {}".format(data['username'],data['room']))
+    join_room(data['room'])
+    socketio.emit('join_room_announcement', data)
 
 
 if __name__ == '__main__':
