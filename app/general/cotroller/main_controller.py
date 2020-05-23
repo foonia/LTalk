@@ -37,7 +37,7 @@ def login():
         username = request.form['username']
         room = request.form['room']
         resp.set_cookie('username',username)
-        resp.set_cookie('room','1')
+        resp.set_cookie('room',room)
         user = [x for x in users if x.username == username][0]
 
         '''
