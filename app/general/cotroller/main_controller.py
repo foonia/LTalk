@@ -7,7 +7,7 @@ from flask_socketio import send, join_room
 from ..model.User import User
 from app import socketio
 
-general_bp = Blueprint('general_bp', __name__)
+general_bp = Blueprint('general_bp', __name__, template_folder='templates')
 
 ###############################################################
 users = []
