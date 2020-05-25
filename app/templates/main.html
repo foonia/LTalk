@@ -71,23 +71,8 @@
       </footer>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="../static/editor.js"></script>
+    <script src="../static/event.js"></script>
   </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
-<script>
-    const socket = io.connect("http://127.0.0.1:5000");
-    socket.on('connect',function(){
-        socket.emit('join_room',{
-            username : "{{ username }}",
-            room : "{{ room }}"
-        })
-    });
-
-    socket.on('join_room_announcement', function(data){
-        console.log(data);
-        const newNode = document.createElement('div');
-        newNode.innerHTML = '<b>' + data.username + '</b>' + ' : has joined the room';
-        document.getElementById('messages').appendChild(newNode);
-    });
-</script>
 </html>
