@@ -5,9 +5,9 @@ from flask import (
 from flask_socketio import send, join_room
 
 from ..model.User import User
+from app import socketio
 
-
-general_bp = Blueprint('general_bp', __name__)
+general_bp = Blueprint('general_bp', __name__, template_folder='templates')
 
 ###############################################################
 users = []
@@ -36,8 +36,10 @@ def login():
         session.pop('username', None)
         username = request.form['username']
         room = request.form['room']
+
         resp.set_cookie('username',username)
         resp.set_cookie('room',room)
+
         user = [x for x in users if x.username == username][0]
 
         '''
@@ -48,7 +50,7 @@ def login():
         if user and room:
             session[username] = user.username
             return resp
-        return redirect(url_for('login'))
+        return redirect(url_for('general_bp.login'))
 
     return render_template('login.html')
 
@@ -74,3 +76,16 @@ def chat():
     else:
         return redirect(url_for('general_bp.login'))
 
+
+@socketio.on('join_room')
+def handle_join_room_event(data):
+    # app.logger.info("{} has joined the room {}".format(data['username'],data['room']))
+    join_room(data['room'])
+    socketio.emit('join_room_announcement', data)
+
+
+@socketio.on('join_room')
+def handle_join_room_event(data):
+    general_bp.logger.info("{} has joined the room {}".format(data['username'],data['room']))
+    join_room(data['room'])
+    socketio.emit('join_room_announcement', data)
