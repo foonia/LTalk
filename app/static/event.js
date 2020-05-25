@@ -1,6 +1,19 @@
 function init() {
     const socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
     const editor = document.querySelector('#editor + .CodeMirror');
+
+    socket.on('connect', function() {
+        socket.emit('joined', {});
+    });
+
+    socket.on('join_room_announcement', data => {
+        console.log(data);
+    });
+
+    socket.on('message', data => {
+        console.log(data);
+    });
+
     editor.addEventListener("keypress", event => {
         if (event.isComposing || event.keyCode === 229) {
             return;
@@ -11,20 +24,5 @@ function init() {
     });
 }
 
-/*
-socket.on('connect',function(){
-    socket.emit('join_room',{
-        username : "{{ username }}",
-        room : "{{ room }}"
-    })
-});
-
-socket.on('join_room_announcement', function(data){
-    console.log(data);
-    const newNode = document.createElement('div');
-    newNode.innerHTML = '<b>' + data.username + '</b>' + ' : has joined the room';
-    document.getElementById('messages').appendChild(newNode);
-});
-*/
 
 init();

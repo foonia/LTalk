@@ -2,7 +2,7 @@ from flask import (
     Blueprint, render_template, request, session,
     g, redirect, url_for, make_response
 )
-from flask_socketio import send, join_room
+from flask_socketio import send, join_room, emit
 
 from ..model.User import User
 from app import socketio
@@ -17,11 +17,11 @@ users.append(User(id=3, username='b', password=''))
 ###############################################################
 
 
-@general_bp.before_request
-def before_request():
-    CUser = request.cookies.get('username')
-    if 'username' in session:
-        user = [x for x in users if x.id == session[CUser]][0]
+# @general_bp.before_request
+# def before_request():
+#     CUser = request.cookies.get('username')
+#     if 'username' in session:
+#         user = [x for x in users if x.id == session[CUser]][0]
 
 
 @general_bp.route('/')
@@ -31,24 +31,26 @@ def index():
 
 @general_bp.route("/login", methods=['GET', 'POST'])
 def login():
-    resp = make_response(redirect(url_for('general_bp.chat')))
+    # resp = make_response(redirect(url_for('general_bp.chat')))
     if request.method == 'POST':
-        session.pop('username', None)
         username = request.form['username']
         room = request.form['room']
-        resp.set_cookie('username', username)
-        resp.set_cookie('room', room)
-        user = [x for x in users if x.username == username][0]
+        session['username'] = username
+        session['room'] = room
+        return redirect(url_for('general_bp.chat'))
+        # resp.set_cookie('username', username)
+        # resp.set_cookie('room', room)
+        # user = [x for x in users if x.username == username][0]
 
         '''
         if user and user.password == password:
             session[username] = user.username
             return redirect(url_for('profile'))
         '''
-        if user and room:
-            session[username] = user.username
-            return resp
-        return redirect(url_for('general_bp.login'))
+        # if user and room:
+        #     session[username] = user.username
+        #     return resp
+        # return redirect(url_for('general_bp.login'))
 
     return render_template('login.html')
 
@@ -61,34 +63,27 @@ def profile():
 '''
 
 
-@general_bp.route("/insertroom")
+@general_bp.route("/main")
 def chat():
-    username = request.cookies.get('username')
-    '''
-    room = request.args.get('room')
-    '''
-    room = request.cookies.get('room')
+    username = session.get('username')
+    room = session.get('room')
 
-    if room:
+    if username and room:
         return render_template('main.html', username=username, room=room)
     else:
         return redirect(url_for('general_bp.login'))
 
 
-@socketio.on('join_room')
+@socketio.on('joined', namespace='/chat')
 def handle_join_room_event(data):
-    # app.logger.info("{} has joined the room {}".format(data['username'],data['room']))
-    join_room(data['room'])
-    socketio.emit('join_room_announcement', data)
+    username = session.get('username')
+    room = session.get('room')
+
+    join_room(room)
+    socketio.emit('join_room_announcement', {'username': username}, room=room)
 
 
-@socketio.on('join_room')
-def handle_join_room_event(data):
-    general_bp.logger.info("{} has joined the room {}".format(data['username'],data['room']))
-    join_room(data['room'])
-    socketio.emit('join_room_announcement', data)
-
-
-@socketio.on('key_press')
+@socketio.on('key_press', namespace='/chat')
 def handle_key_event(data):
-    general_bp.logger.info(data);
+    room = session.get('room')
+    socketio.emit('message', data, room=room)
