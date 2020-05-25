@@ -87,3 +87,8 @@ def handle_join_room_event(data):
     general_bp.logger.info("{} has joined the room {}".format(data['username'],data['room']))
     join_room(data['room'])
     socketio.emit('join_room_announcement', data)
+
+
+@socketio.on('key_press')
+def handle_key_event(data):
+    general_bp.logger.info(data);
