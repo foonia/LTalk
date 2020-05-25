@@ -73,17 +73,19 @@ def chat():
     else:
         return redirect(url_for('general_bp.login'))
 
-
+# broadcast 할 필요 없습니다. 혹시나해서 설정한거라
 @socketio.on('joined', namespace='/chat')
 def handle_join_room_event(data):
     username = session.get('username')
     room = session.get('room')
 
     join_room(room)
-    socketio.emit('join_room_announcement', {'username': username}, room=room)
+    emit('join_room_announcement', {'username': username, 'room':room}, broadcast=True)
 
 
 @socketio.on('key_press', namespace='/chat')
 def handle_key_event(data):
     room = session.get('room')
-    socketio.emit('message', data, room=room)
+    print(data['keyCode'])
+    emit("message", {'data':data, 'room' : room},broadcast=True)
+

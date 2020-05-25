@@ -7,10 +7,10 @@ function init() {
     });
 
     socket.on('join_room_announcement', data => {
-        console.log(data);
+        console.log('in ' + data['room']);
     });
 
-    socket.on('message', data => {
+    socket.on('message', function(data){
         console.log(data);
     });
 
