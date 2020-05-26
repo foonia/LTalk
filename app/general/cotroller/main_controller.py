@@ -2,7 +2,6 @@ from flask import (
     Blueprint, render_template, request, session,
     g, redirect, url_for, make_response
 )
-
 from flask_socketio import send, join_room, emit
 import pymysql
 from ..model.User import User
@@ -37,6 +36,10 @@ def login():
         session.pop('userid', None)
         userid = request.form['username']
         room = request.form['room']
+
+        # resp.set_cookie('username', username)
+        # resp.set_cookie('room', room)
+        # user = [x for x in users if x.username == username][0]
 
         resp.set_cookie('userid',userid)
         resp.set_cookie('room',room)
@@ -77,25 +80,24 @@ def profile():
 
 @general_bp.route("/main")
 def chat():
+
     userid = session.get('userid')
     room = session.get('room')
+
     if userid and room:
         return render_template('main.html', username=userid, room=room)
-
+    else:
+        return redirect(url_for('general_bp.login'))
     '''
     userid = request.cookies.get('userid')
     room = request.args.get('room')
     room = request.cookies.get('room')
     '''
 
-    if room:
-        return render_template('main.html', username=userid, room=room)
-    else:
-        return redirect(url_for('general_bp.login'))
-
 # broadcast 할 필요 없습니다. 혹시나해서 설정한거라
 @socketio.on('joined', namespace='/chat')
 def handle_join_room_event(data):
+
     userid = session.get('userid')
     room = session.get('room')
 
@@ -104,12 +106,9 @@ def handle_join_room_event(data):
     emit('join_room_announcement', {'username': userid, 'room':room}, broadcast=True)
     #general_bp.logger.info("{} has joined the room {}".format(data['username'],data['room']))
 
-
-
 @socketio.on('key_press', namespace='/chat')
 def handle_key_event(data):
     room = session.get('room')
     print(data['keyCode'])
     emit("message", {'data':data, 'room' : room},broadcast=True)
     #general_bp.logger.info("key {}".format(data['keyCode']))
-
