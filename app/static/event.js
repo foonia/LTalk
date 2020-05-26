@@ -18,9 +18,10 @@ function init() {
         if (event.isComposing || event.keyCode === 229) {
             return;
         }
-
-        console.log(event.keyCode);
-        socket.emit('key_press', {keyCode: event.keyCode});
+        console.log(event.keyCode)
+        socket.emit('key_press', {
+            keyCode: event.keyCode
+        });
     });
 }
 
