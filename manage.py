@@ -8,8 +8,10 @@ from app import socketio, create_app, db
 
 app = create_app(os.getenv('FLASK_ENV') or 'dev')
 
+migrate = Migrate(app, db)
 # app.app_context().push()
 manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 # migrate = Migrate(app, db)
 # manager.add_command('db', MigrateCommand)
 
