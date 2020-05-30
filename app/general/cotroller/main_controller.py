@@ -1,3 +1,5 @@
+import json
+
 from flask import (
     Blueprint, render_template, request, session,
     g, redirect, url_for, make_response
@@ -9,12 +11,13 @@ from app import socketio
 
 general_bp = Blueprint('general_bp', __name__, template_folder='templates')
 
-class MysqlClass:
-    def __init__(self):
-        self.conn = pymysql.connect(host="localhost", user="Acapellia", password="long503827!", db="ltalk")
-        self.cur = self.conn.cursor()
-        self.query = ''
-mysql = MysqlClass()
+#
+# class MysqlClass:
+#     def __init__(self):
+#         self.conn = pymysql.connect(host="localhost", user="Acapellia", password="long503827!", db="ltalk")
+#         self.cur = self.conn.cursor()
+#         self.query = ''
+# mysql = MysqlClass()
 
 ''' 세션 용도에서 지금은 보류
 @general_bp.before_request
@@ -31,29 +34,23 @@ def index():
 
 @general_bp.route("/login", methods=['GET', 'POST'])
 def login():
-    resp = make_response(redirect(url_for('general_bp.chat')))
     if request.method == 'POST':
-        session.pop('userid', None)
-        userid = request.form['username']
+        username = request.form['username']
         room = request.form['room']
 
-        # resp.set_cookie('username', username)
-        # resp.set_cookie('room', room)
-        # user = [x for x in users if x.username == username][0]
+        session['username'] = username
+        session['room'] = room
 
-        resp.set_cookie('userid',userid)
-        resp.set_cookie('room',room)
-
-        # db에서 확인하는 부분
-        user = None
-        mysql.query = "select * from user where id=%s"
-        data = mysql.cur.execute(mysql.query, (userid))
-
-        if (len(mysql.cur.fetchall()) > 0):
-            user = User(id=userid, pw='', name='')
-            print("Send LoginSuccess to client")
-        else:
-            print("Send LoginFail to client")
+        # # db에서 확인하는 부분
+        # user = None
+        # mysql.query = "select * from user where id=%s"
+        # data = mysql.cur.execute(mysql.query, (userid))
+        #
+        # if (len(mysql.cur.fetchall()) > 0):
+        #     user = User(id=userid, pw='', name='')
+        #     print("Send LoginSuccess to client")
+        # else:
+        #     print("Send LoginFail to client")
         
         '''#현재 pw가 없음
         if user and user.password == password:
@@ -61,11 +58,8 @@ def login():
             return redirect(url_for('profile'))
         '''
 
-        if user and room:
-            session['userid'] = user.id
-            session['room'] = room
-            return resp
-        return redirect(url_for('general_bp.login'))
+        if username and room:
+            return redirect(url_for('general_bp.chat'))
 
     return render_template('login.html')
 
@@ -80,21 +74,15 @@ def profile():
 
 @general_bp.route("/main")
 def chat():
-
-    userid = session.get('userid')
+    userid = session.get('username')
     room = session.get('room')
 
     if userid and room:
         return render_template('main.html', username=userid, room=room)
     else:
         return redirect(url_for('general_bp.login'))
-    '''
-    userid = request.cookies.get('userid')
-    room = request.args.get('room')
-    room = request.cookies.get('room')
-    '''
 
-# broadcast 할 필요 없습니다. 혹시나해서 설정한거라
+
 @socketio.on('joined', namespace='/chat')
 def handle_join_room_event(data):
 
@@ -103,12 +91,12 @@ def handle_join_room_event(data):
 
     join_room(room)
 
-    emit('join_room_announcement', {'username': userid, 'room':room}, broadcast=True)
+    emit('join_room_announcement', {'username': userid, 'room': room}, include_self=False)
     #general_bp.logger.info("{} has joined the room {}".format(data['username'],data['room']))
+
 
 @socketio.on('key_press', namespace='/chat')
 def handle_key_event(data):
     room = session.get('room')
-    print(data['keyCode'])
-    emit("message", {'data':data, 'room' : room},broadcast=True)
-    #general_bp.logger.info("key {}".format(data['keyCode']))
+    emit("message", data, room=room, include_self=False)
+    # general_bp.logger.info(json.loads(data))
