@@ -3,17 +3,15 @@ import unittest
 
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
-
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from app import socketio, create_app, db
-
+import app.general.model.models
 app = create_app(os.getenv('FLASK_ENV') or 'dev')
-
-migrate = Migrate(app, db)
-# app.app_context().push()
+app.app_context().push()
 manager = Manager(app)
+migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
-# migrate = Migrate(app, db)
-# manager.add_command('db', MigrateCommand)
 
 @manager.command
 def run():
