@@ -40,3 +40,4 @@ config_by_name = dict(
 )
 
 key = Config.SECRET_KEY
+SQLALCHEMY_DATABASE_URI='mysql://<Acapellia>:<long503827!>@<localhost>/<ltalk>?charset=utf8'
